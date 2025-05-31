@@ -1,0 +1,2 @@
+- [ ] Espelhar todos os cruzamentos para o mesmo lado, para isso identifique se o time da casa ou de fora esta atacando (calcule a distancia da bola para o goleiro).
+- [ ] Criar um script para salvar varias animacoes de jogadas de cruzamentos em um folder /videos para poder analisar depois
