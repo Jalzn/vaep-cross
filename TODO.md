@@ -1,6 +1,11 @@
-- [ ] Criar um script para salvar varias animacoes de jogadas de cruzamentos em um folder /videos para poder analisar depois
-- [ ] Implementar o pitch control
-- [ ] Colocar a informacao se o cruzamento foi sucesso ou nao
-- [ ] Tirar bola parada
+- [x] Dados de events contem metadados relevantes
+- [x] Dados de tracking contem metadados relevantes
+- [x] Funcao para transformar os dados de eventos para SPADL
+- [x] Vaep implementado para os dados de eventos
 
-Features: - Numero jogadores na area - Qual area foi o cruzamento (primeiro pau, segundo pau) - Se foi cruzamento alto ou baixo
+- [x] Adicionar velocidade e direcao dos jogadores
+- [x] Padronizar os ataques para a mesma direcao
+- [x] Identificar cruzamentos que foram sucesso a partir da posse de bola
+- [x] Calcular o numero de atacantes e defensores na area de cruzamento
+- [ ] Clusterizar os cruzmanetos por regiao da area (Vamos precisar de dados da bola?)
+- [x] Implementar o pitch control para um frame de cruzamento
