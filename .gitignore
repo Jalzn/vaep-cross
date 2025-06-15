@@ -188,6 +188,5 @@ cython_debug/
 .cursorindexingignore
 
 
-*/*.parquet
-./data/*.parquet
-./data/*.jsonl.bz2
+data/*.parquet
+data/*.jsonl.bz2
