@@ -1,7 +1,6 @@
 import pandas as pd
 
-
-def calculate_smoothed_velocity(tracking_df: pd.DataFrame, window_size=8, frame_rate=25) -> pd.DataFrame:
+def _calculate_smoothed_velocity(tracking_df: pd.DataFrame, window_size=8, frame_rate=25) -> pd.DataFrame:
     """
     Calcula a velocidade suavizada (vx, vy) dos jogadores a partir do tracking_df.
 
@@ -31,7 +30,8 @@ def calculate_smoothed_velocity(tracking_df: pd.DataFrame, window_size=8, frame_
 
     return df
 
-def standardize_crossings_direction(cross_tracking_df, cross_events_df):
+
+def _standardize_crossings_direction(cross_tracking_df, cross_events_df):
     df = cross_tracking_df.copy()
 
     for _, event in cross_events_df.iterrows():
@@ -66,58 +66,22 @@ def standardize_crossings_direction(cross_tracking_df, cross_events_df):
 
     return df
 
-
-def mark_cross_success(events_df):
-    events = events_df.copy()
-    events["cross_success"] = False  # Inicializa a coluna
-
-    # Garante ordenação temporal
-    events = events.sort_values(["match_id", "period_id", "timestamp"]).reset_index(drop=True)
-
-    cross_indices = events[events["pass_type"] == "CROSS"].index
-
-    for idx in cross_indices:
-        if idx + 1 >= len(events):
-            continue  # Não tem próximo evento
-
-        next_event = events.iloc[idx + 1]
-
-        # Exemplo: se o próximo evento for do mesmo time e tiver resultado "COMPLETE"
-        if  pd.notna(next_event["result"]) and next_event["result"] == "COMPLETE":
-            events.at[idx, "cross_success"] = True
-
-    return events
-
-
-def count_players_in_box(frame_df, attacking_team_id):
+def process(tracking_df: pd.DataFrame, actions: pd.DataFrame, match_id: int) -> pd.DataFrame:
     """
-    Conta número de atacantes e defensores dentro da área para um frame específico.
-
-    Parâmetros:
-        frame_df: DataFrame com tracking de um único frame (posição x, y, team_id de cada jogador).
-        attacking_team_id: ID do time que está atacando.
-
-    Retorno:
-        attackers_in_box: Número de atacantes na área
-        defenders_in_box: Número de defensores na área
+    Processa os dados brutos de tracking vindo do parquet.
+    Vai adicionar as velocidades suavizadas, filtrar apenas os
+    frames de cruzamento e padronizar para tudo ocorrer no mesmo
+    lado do campo
     """
+    tracking_df = _calculate_smoothed_velocity(tracking_df)
 
-    # Define limites da área (ajuste se seu campo tiver outra escala)
-    area_x_min = 36.5   # Começo da grande área no lado direito (assumindo ataque da esquerda pra direita)
-    area_x_max = 60     # Fim do campo
-    area_y_min = -20
-    area_y_max = 20
+    actions = actions[
+        (actions["action_type"] == "CROSS") &
+        (actions["match_id"] == match_id)
+    ].copy()
+    
+    tracking_df = tracking_df[tracking_df["possession_event_id"].isin(actions["event_id"].tolist())].copy()
 
-    # Filtra jogadores dentro da área
-    in_box = frame_df[
-        (frame_df["x"] >= area_x_min) &
-        (frame_df["x"] <= area_x_max) &
-        (frame_df["y"] >= area_y_min) &
-        (frame_df["y"] <= area_y_max)
-    ]
+    tracking_df = _standardize_crossings_direction(tracking_df, actions)
 
-    # Conta
-    attackers_in_box = (in_box["team_id"] == attacking_team_id).sum()
-    defenders_in_box = (in_box["team_id"] != attacking_team_id).sum()
-
-    return attackers_in_box, defenders_in_box
+    return tracking_df

@@ -52,8 +52,8 @@ def read_events() -> pd.DataFrame:
         events_df[col] = pd.to_numeric(events_df[col], errors='coerce')
 
     # Converter campos de timestamp (se quiser como datetime)
-    events_df['timestamp'] = pd.to_datetime(events_df['timestamp'], errors='coerce')
-    events_df['end_timestamp'] = pd.to_datetime(events_df['end_timestamp'], errors='coerce')
+    # events_df['timestamp'] = pd.to_datetime(events_df['timestamp'], errors='coerce')
+    # events_df['end_timestamp'] = pd.to_datetime(events_df['end_timestamp'], errors='coerce')
 
     # Campos de categorias textuais (como event_type, result, pass_type, etc)
     categorical_columns = [
