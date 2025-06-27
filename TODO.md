@@ -15,5 +15,7 @@
 - [ ] Filtrar os dados para apenas cruzmanetos antes de treinar o VAEP
 - [ ] (Depois) Comparar dados espelhas e nao espelhados
 
+- Olhar angulo polar entre acao1 e acao
+
 Regra de classificao
 Arvore de Decisao
